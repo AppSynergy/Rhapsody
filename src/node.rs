@@ -11,6 +11,10 @@ pub enum Element {
     Water
 }
 
+pub enum ThreeElements {
+    Combination(Element, Element, Element)
+}
+
 fn element_from_index(index: usize) -> Element {
     [Element::Air, Element::Earth, Element::Fire, Element::Water][index]
 }
@@ -49,6 +53,14 @@ impl Node {
         }
     }
 
+    fn foo(&self) -> &str {
+        let three_elements = ThreeElements::Combination(Element::Air, Element::Fire, Element::Water);
+        match three_elements {
+            ThreeElements::Combination(Element::Air, Element::Fire, Element::Water) => "got ya",
+            _ => "no",
+        }
+    }
+
 }
 
 #[cfg(test)]
@@ -59,7 +71,12 @@ mod tests {
     fn can_create_three_elements() {
         let node = Node::new((0, 0));
         assert_eq!(node.elements.len(), 3);
+
+        assert_eq!(node.foo(), "got ya");
+
         assert_eq!(node.vulcanism, 0);
         assert!(node.vulcanism() < 9);
+
+
     }
 }

@@ -1,7 +1,7 @@
 use crate::node::Node;
 use rand;
 use rand::prelude::*;
-
+use std::fmt;
 
 
 #[derive(Debug)]
@@ -46,6 +46,42 @@ impl Level {
 
     }
 }
+
+impl fmt::Display for Level {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "╭")?;
+        for _ in 0..self.height as usize {
+            write!(f, "──")?;
+        }
+        write!(f, "╮\n")?;
+        for row in 0..self.height as usize {
+            write!(f, "│")?;
+            for col in 0..self.width as usize {
+                let mut filled = false;
+                for node in &self.nodes {
+                    if node.location == (row as i32, col as i32) {
+                        write!(f, "N ")?;
+                        filled = true;
+                        break;
+                    }
+                }
+                if !filled {
+                    write!(f, "  ")?;
+                }
+
+            }
+            write!(f, "│\n")?;
+        }
+        write!(f, "╰")?;
+        for _ in 0..self.height as usize {
+            write!(f, "──")?;
+        }
+        write!(f, "╯\n")?;
+
+        Ok(())
+    }
+}
+
 
 
 #[cfg(test)]

@@ -25,17 +25,28 @@ fn random_element() -> Element {
 pub struct Node {
     pub elements: [Element; 3],
     pub location: (i32, i32),
+    vulcanism: u8,
 }
 
 impl Node {
     pub fn new(location: (i32, i32)) -> Self {
         let elements = Node::generate_elements();
 
-        Node { elements, location }
+        Node { elements, location, vulcanism: 0 }
     }
 
-    pub fn generate_elements() -> [Element; 3] {
+    fn generate_elements() -> [Element; 3] {
         [random_element(), random_element(), random_element()]
+    }
+
+    fn vulcanism(&self) -> u8 {
+        match self.elements {
+            [Element::Fire, Element::Fire, Element::Fire] => 8,
+            [Element::Fire, Element::Fire, Element::Earth] => 8,
+            [Element::Fire, _, _] => 1,
+            [Element::Earth, _, _] => 1,
+            [_, _, _] => 0,
+        }
     }
 
 }
@@ -47,8 +58,8 @@ mod tests {
     #[test]
     fn can_create_three_elements() {
         let node = Node::new((0, 0));
-
-        assert_eq!(node.elements.len(), 3)
-
+        assert_eq!(node.elements.len(), 3);
+        assert_eq!(node.vulcanism, 0);
+        assert!(node.vulcanism() < 9);
     }
 }

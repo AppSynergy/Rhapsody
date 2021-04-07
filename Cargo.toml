@@ -1,5 +1,5 @@
 [package]
-name = "porterrain"
+name = "rhapsody"
 version = "0.1.0"
 authors = ["Adam Marshall <adam@appsynergy.net>"]
 edition = "2018"
@@ -8,4 +8,3 @@ edition = "2018"
 
 [dependencies]
 rand = "0.5"
-noise = "0.7"

@@ -1,33 +1,8 @@
+use crate::node::Node;
 use rand;
 use rand::prelude::*;
 
-#[derive(PartialEq)]
-#[derive(Debug)]
-enum NodeElement {
-    Air,
-    Earth,
-    Fire,
-    Water
-}
 
-#[derive(Debug)]
-struct Node {
-    element: NodeElement,
-    location: (i32, i32),
-}
-
-impl Node {
-    fn new(element: NodeElement, location: (i32, i32)) -> Self {
-
-        Node { element, location }
-    }
-
-}
-
-struct Tile {
-    vulcanism: i32,
-    
-}
 
 #[derive(Debug)]
 pub struct Level {
@@ -48,10 +23,10 @@ impl Level {
 
         let mut nodes = Vec::new();
 
-        nodes.push(Node::new(NodeElement::Air, Level::generate_random_location(width, height)));
-        nodes.push(Node::new(NodeElement::Earth, Level::generate_random_location(width, height)));
-        nodes.push(Node::new(NodeElement::Fire, Level::generate_random_location(width, height)));
-        nodes.push(Node::new(NodeElement::Water, Level::generate_random_location(width, height)));
+        nodes.push(Node::new(Level::generate_random_location(width, height)));
+        nodes.push(Node::new(Level::generate_random_location(width, height)));
+        nodes.push(Node::new(Level::generate_random_location(width, height)));
+        nodes.push(Node::new(Level::generate_random_location(width, height)));
 
         Level {
             width,
@@ -81,11 +56,11 @@ mod tests {
     fn can_create_levels() {
         let level = Level::new(200, 200);
 
-        assert_eq!(level.nodes[0].element,  NodeElement::Air);
+        //assert_eq!(level.nodes[0].element,  Element::Air);
 
         assert_eq!(200, level.board.len());
-        for node in level.nodes {
-            assert!(node.location.0 < 200)
-        }
+        //for node in level.nodes {
+        //    assert!(node.location.0 < 200)
+        //}
     }
 }

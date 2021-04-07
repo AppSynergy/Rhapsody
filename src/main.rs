@@ -2,6 +2,7 @@ extern crate rand;
 
 mod biome;
 mod level;
+mod node;
 
 fn main() {
     let tile = Tile::new(HashMap::new());

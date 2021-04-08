@@ -1,6 +1,8 @@
 use rand;
 use rand::prelude::*;
 
+mod rules;
+
 #[derive(Copy, Clone)]
 #[derive(PartialEq)]
 #[derive(Debug)]

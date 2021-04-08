@@ -7,17 +7,19 @@ pub trait NodeTraits {
 }
 
 enum CardPoint {
-    North, East, South, West
+    North,
+    East,
+    South,
+    West,
 }
 
 enum Arrangement {
     One(CardPoint),
     Two(CardPoint, CardPoint),
-    Three(CardPoint, CardPoint, CardPoint)
+    Three(CardPoint, CardPoint, CardPoint),
 }
 
-
-fn rand_u8(x:u8, y:u8) -> u8 {
+fn rand_u8(x: u8, y: u8) -> u8 {
     let mut rng = rand::thread_rng();
     rng.gen_range(x, y) as u8
 }
@@ -42,13 +44,15 @@ impl Node {
             children: 0,
             arrangement: "".to_string(),
             distance: 0,
-            voids:0, vegetation: 0, humidity: 0,
-            vulcanism: 0 ,climate: 0 ,topography: 0,
+            voids: 0,
+            vegetation: 0,
+            humidity: 0,
+            vulcanism: 0,
+            climate: 0,
+            topography: 0,
         }
     }
 }
-
-
 
 impl NodeTraits for Node {
     fn children(&self) -> u8 {
@@ -68,7 +72,7 @@ impl NodeTraits for Node {
             "EWW" => 16,
             "FWW" => 16,
 
-            _ => 9
+            _ => 9,
         }
     }
 
@@ -95,17 +99,14 @@ impl NodeTraits for Node {
             "EWW" => 2,
             "FWW" => 2,
 
-            _ => 0
+            _ => 0,
         }
     }
 }
 
-
-
-
 #[cfg(test)]
 mod tests {
-     use super::*;
+    use super::*;
 
     #[test]
     fn can_create_nodes() {

@@ -3,7 +3,6 @@ use rand;
 use rand::prelude::*;
 use std::fmt;
 
-
 #[derive(Debug)]
 pub struct Level {
     width: i32,
@@ -19,7 +18,6 @@ impl Level {
             let row = vec![0; width as usize];
             board.push(row);
         }
-
 
         let mut nodes = Vec::new();
 
@@ -43,7 +41,6 @@ impl Level {
         let y = rng.gen_range(0, height);
 
         return (x, y);
-
     }
 }
 
@@ -68,7 +65,6 @@ impl fmt::Display for Level {
                 if !filled {
                     write!(f, "  ")?;
                 }
-
             }
             write!(f, "│\n")?;
         }
@@ -82,21 +78,14 @@ impl fmt::Display for Level {
     }
 }
 
-
-
 #[cfg(test)]
 mod tests {
-     use super::*;
+    use super::*;
 
     #[test]
     fn can_create_levels() {
         let level = Level::new(200, 200);
 
-        //assert_eq!(level.nodes[0].element,  Element::Air);
-
         assert_eq!(200, level.board.len());
-        //for node in level.nodes {
-        //    assert!(node.location.0 < 200)
-        //}
     }
 }

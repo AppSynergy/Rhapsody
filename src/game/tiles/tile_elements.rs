@@ -28,6 +28,7 @@ impl Element {
 
 pub type ThreeElements = [Element; 3];
 
+#[derive(Debug)]
 pub struct TileElements {
     pub elements: ThreeElements,
     pub elements_label: String,

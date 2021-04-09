@@ -12,5 +12,7 @@ fn main() {
     let level = Level::new(20, 20);
     println!("{}", level);
 
-    let _t = Tile::spawn();
+    let tile = Tile::spawn();
+    println!("{:?}", tile)
+
 }

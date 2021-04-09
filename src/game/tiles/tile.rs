@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Debug)]
 pub struct Tile {
     pub terrain_type: TerrainType,
     pub elements: TileElements,
@@ -22,7 +23,7 @@ impl Tile {
     pub fn spawn() -> Self {
         let tile_elements = TileElements::spawn();
         let tile_properties = TileProperties::spawn(&tile_elements);
-        let terrain_type = TerrainType::spawn(&tile_properties);
+        let terrain_type = TerrainType::spawn(&tile_elements, &tile_properties);
 
         Tile::new(terrain_type, tile_elements, tile_properties)
     }

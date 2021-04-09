@@ -1,6 +1,7 @@
 use super::rnjesus;
 use super::{Element, ThreeElements, TileElements};
 
+#[derive(Debug)]
 pub struct TileProperties {
     // Environmental properties
     pub topography: u8,

@@ -12,6 +12,6 @@ pub enum TerrainType {
     Tundra,
 }
 
-fn select_terrain_type(tile_properties: TileProperties) -> TerrainType {
+fn select_terrain_type(_tile_properties: TileProperties) -> TerrainType {
     TerrainType::Desert
 }

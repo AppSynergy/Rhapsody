@@ -1,18 +1,12 @@
 use rand;
 use rand::prelude::*;
 
-mod rules;
-
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Element {
     Air,
     Earth,
     Fire,
     Water,
-}
-
-pub enum ThreeElements {
-    Combination(Element, Element, Element),
 }
 
 fn element_from_index(index: usize) -> Element {
@@ -46,25 +40,6 @@ impl Node {
     fn generate_elements() -> [Element; 3] {
         [random_element_x(), random_element_x(), random_element_x()]
     }
-
-    fn vulcanism(&self) -> u8 {
-        match self.elements {
-            [Element::Fire, Element::Fire, Element::Fire] => 8,
-            [Element::Fire, Element::Fire, Element::Earth] => 8,
-            [Element::Fire, _, _] => 1,
-            [Element::Earth, _, _] => 1,
-            [_, _, _] => 0,
-        }
-    }
-
-    fn foo(&self) -> &str {
-        let three_elements =
-            ThreeElements::Combination(Element::Air, Element::Fire, Element::Water);
-        match three_elements {
-            ThreeElements::Combination(Element::Air, Element::Fire, Element::Water) => "got ya",
-            _ => "no",
-        }
-    }
 }
 
 #[cfg(test)]
@@ -75,10 +50,5 @@ mod tests {
     fn can_create_three_elements() {
         let node = Node::new((0, 0));
         assert_eq!(node.elements.len(), 3);
-
-        assert_eq!(node.foo(), "got ya");
-
-        assert_eq!(node.vulcanism, 0);
-        assert!(node.vulcanism() < 9);
     }
 }

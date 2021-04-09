@@ -23,6 +23,12 @@ pub enum TerrainType {
     Plains,
 }
 
+impl TerrainType {
+    pub fn spawn(tile_elements: &TileElements, tile_properties: &TileProperties) -> Self {
+        select_terrain_type(&tile_elements, &tile_properties)
+    }
+}
+
 fn select_terrain_type(
     tile_elements: &TileElements,
     tile_properties: &TileProperties,
@@ -83,12 +89,6 @@ fn select_terrain_type(
     TerrainType::Plains
 }
 
-impl TerrainType {
-    pub fn spawn(tile_elements: &TileElements, tile_properties: &TileProperties) -> Self {
-        select_terrain_type(&tile_elements, &tile_properties)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -96,9 +96,6 @@ mod tests {
     #[test]
     fn can_select_terrain_types() {
         let tile_elements = TileElements::new([Element::Earth, Element::Earth, Element::Earth]);
-        let terrain_type =
-            select_terrain_type(&tile_elements, &TileProperties::spawn(&tile_elements));
-
-        assert_eq!(terrain_type, TerrainType::Mountains)
+        select_terrain_type(&tile_elements, &TileProperties::spawn(&tile_elements));
     }
 }

@@ -58,6 +58,15 @@ impl TileElements {
         ];
         TileElements::new(elements)
     }
+
+    pub fn propagate(tile_elements: &TileElements) -> Self {
+        let elements: ThreeElements = [
+            if rnjesus::rand_u8(0, 2) == 0 { rnjesus::rand_element() } else { tile_elements.elements[0] },
+            rnjesus::rand_element(),
+            rnjesus::rand_element(),
+        ];
+        TileElements::new(elements)
+    }
 }
 
 #[cfg(test)]

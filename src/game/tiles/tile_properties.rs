@@ -93,11 +93,15 @@ impl TileProperties {
         let elements = &tile_elements.elements;
 
         let topography = get_topography(elements);
+        let vulcanism = rnjesus::rand_u8(0, 10);
+        let temperature = rnjesus::rand_u8(0, 10);
+        let humidity = rnjesus::rand_u8(0, 10);
+        let vegetation = rnjesus::rand_u8(0, 10);
 
         let children = get_children(label);
         let distance = get_distance(label);
 
-        TileProperties::new(topography, 0, 0, 0, 0, children, distance)
+        TileProperties::new(topography, vulcanism, temperature, humidity, vegetation, children, distance)
     }
 }
 
@@ -110,7 +114,6 @@ mod tests {
         let tile_elements = TileElements::new([Element::Earth, Element::Earth, Element::Water]);
         let tile_properties = TileProperties::spawn(&tile_elements);
 
-        assert_eq!(tile_properties.vegetation, 0);
         assert_eq!(tile_properties.children, 9);
         assert_eq!(tile_properties.distance, 1);
     }

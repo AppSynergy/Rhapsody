@@ -1,3 +1,5 @@
+use std::fmt;
+
 use super::*;
 
 #[derive(Debug)]
@@ -5,6 +7,12 @@ pub struct Tile {
     pub terrain_type: TerrainType,
     pub elements: TileElements,
     pub properties: TileProperties,
+}
+
+impl fmt::Display for Tile {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?} {}", self.terrain_type, self.elements.elements_label)
+    }
 }
 
 impl Tile {
@@ -28,9 +36,12 @@ impl Tile {
         Tile::new(terrain_type, tile_elements, tile_properties)
     }
 
-    pub fn propagate(_tile: &Tile) -> Self {
-        // TODO
-        Tile::spawn()
+    pub fn propagate(tile: &Tile) -> Self {
+        let tile_elements = TileElements::propagate(&tile.elements);
+        let tile_properties = TileProperties::spawn(&&tile_elements);
+        let terrain_type = TerrainType::spawn(&tile_elements, &tile_properties);
+
+        Tile::new(terrain_type, tile_elements, tile_properties)
     }
 }
 
@@ -40,9 +51,7 @@ mod tests {
 
     #[test]
     fn can_spawn_new_tiles() {
-        let tile = Tile::spawn();
-
-        assert_eq!(tile.properties.vegetation, 0)
+        Tile::spawn();
     }
 
     #[test]

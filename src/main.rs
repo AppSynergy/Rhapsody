@@ -2,7 +2,6 @@ extern crate rand;
 
 mod game;
 mod level;
-mod node;
 
 use game::tiles::Tile;
 

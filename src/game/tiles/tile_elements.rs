@@ -1,3 +1,4 @@
+use super::rnjesus;
 use std::fmt;
 
 #[derive(Copy, Clone, Eq, Ord, PartialOrd, PartialEq, Debug)]
@@ -47,6 +48,15 @@ impl TileElements {
             elements_label,
         }
     }
+
+    pub fn spawn() -> Self {
+        let elements: ThreeElements = [
+            rnjesus::rand_element(),
+            rnjesus::rand_element(),
+            rnjesus::rand_element(),
+        ];
+        TileElements::new(elements)
+    }
 }
 
 #[cfg(test)]
@@ -55,6 +65,7 @@ mod tests {
 
     #[test]
     fn can_create_tile_elements() {
+        TileElements::spawn();
         let te = TileElements::new([Element::Air, Element::Earth, Element::Fire]);
         assert_eq!(te.elements[1], Element::Earth)
     }

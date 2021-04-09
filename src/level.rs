@@ -1,14 +1,24 @@
-use crate::node::Node;
 use rand;
 use rand::prelude::*;
 use std::fmt;
+
+#[derive(Debug)]
+pub struct Tile {
+    pub location: (i32, i32),
+}
+
+impl Tile {
+    pub fn new(location: (i32, i32)) -> Self {
+        Tile { location }
+    }
+}
 
 #[derive(Debug)]
 pub struct Level {
     width: i32,
     height: i32,
     board: Vec<Vec<i32>>,
-    nodes: Vec<Node>,
+    tiles: Vec<Tile>,
 }
 
 impl Level {
@@ -19,18 +29,18 @@ impl Level {
             board.push(row);
         }
 
-        let mut nodes = Vec::new();
+        let mut tiles = Vec::new();
 
-        nodes.push(Node::new(Level::generate_random_location(width, height)));
-        nodes.push(Node::new(Level::generate_random_location(width, height)));
-        nodes.push(Node::new(Level::generate_random_location(width, height)));
-        nodes.push(Node::new(Level::generate_random_location(width, height)));
+        tiles.push(Tile::new(Level::generate_random_location(width, height)));
+        tiles.push(Tile::new(Level::generate_random_location(width, height)));
+        tiles.push(Tile::new(Level::generate_random_location(width, height)));
+        tiles.push(Tile::new(Level::generate_random_location(width, height)));
 
         Level {
             width,
             height,
             board,
-            nodes,
+            tiles,
         }
     }
 
@@ -55,8 +65,8 @@ impl fmt::Display for Level {
             write!(f, "│")?;
             for col in 0..self.width as usize {
                 let mut filled = false;
-                for node in &self.nodes {
-                    if node.location == (row as i32, col as i32) {
+                for tile in &self.tiles {
+                    if tile.location == (row as i32, col as i32) {
                         write!(f, "N ")?;
                         filled = true;
                         break;

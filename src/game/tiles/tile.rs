@@ -37,7 +37,9 @@ impl Tile {
     }
 
     pub fn propagate(tile: &Tile) -> Self {
+        // Depending on the title's elemental characteristics, it multiplies/propogates in different ways:
         let tile_elements = TileElements::propagate(&tile.elements);
+        // TODO convert to propagate??
         let tile_properties = TileProperties::spawn(&&tile_elements);
         let terrain_type = TerrainType::spawn(&tile_elements, &tile_properties);
 

@@ -29,6 +29,7 @@ impl TerrainType {
     }
 }
 
+// Based on these rolls, a type is inferred
 fn select_terrain_type(
     tile_elements: &TileElements,
     tile_properties: &TileProperties,

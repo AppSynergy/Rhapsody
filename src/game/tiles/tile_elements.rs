@@ -27,6 +27,7 @@ impl Element {
 }
 
 pub type ThreeElements = [Element; 3];
+pub type AllElements = [Element; 4];
 
 #[derive(Debug)]
 pub struct TileElements {
@@ -50,6 +51,8 @@ impl TileElements {
         }
     }
 
+    // These tiles are spawned with three randomly chosen elemental values
+    // (this can include duplicate rolls, eg two or three of the same element)
     pub fn spawn() -> Self {
         let elements: ThreeElements = [
             rnjesus::rand_element(),
@@ -60,64 +63,53 @@ impl TileElements {
     }
 
     pub fn propagate(tile_elements: &TileElements) -> Self {
-        let elements;
-        // Parents with three of the same elements will have a 50 percent chance of sharing the same elemental mix,
+        // Parents with three of the same elements will have a 50/30/20 percent chance
         if tile_elements.is_triple() {
-            // TODO refactor
-            let roll = rnjesus::d10();
-            if roll <= 5 {
-                elements = tile_elements.elements;
-            // a 30 percent chance of one of the three being randomly re rolled,
-            } else if roll <= 8 {
-                elements = reroll_one(tile_elements.elements);
-            // and a 20 percent chance for two to be re rolled.
-            } else {
-                elements = reroll_two(tile_elements.elements);
-            }
-            TileElements::new(elements)
-
+            tile_elements.maybe_reroll(10, 16)
         // Those with two of the same have 80/15/5 percent chance
         } else if tile_elements.is_double() {
-            let roll = rnjesus::d20();
-            if roll <= 16 {
-                elements = tile_elements.elements;
-                // a 30 percent chance of one of the three being randomly re rolled,
-            } else if roll <= 19 {
-                elements = reroll_one(tile_elements.elements);
-            // and a 20 percent chance for two to be re rolled.
-            } else {
-                elements = reroll_two(tile_elements.elements);
-            }
-            TileElements::new(elements)
-
+            tile_elements.maybe_reroll(16, 19)
         // Those with all different have 90/5/5
         } else {
-            let roll = rnjesus::d20();
-            if roll <= 18 {
-                elements = tile_elements.elements;
-                // a 30 percent chance of one of the three being randomly re rolled,
-            } else if roll <= 19 {
-                elements = reroll_one(tile_elements.elements);
-            // and a 20 percent chance for two to be re rolled.
-            } else {
-                elements = reroll_two(tile_elements.elements);
-            }
-            TileElements::new(elements)
+            tile_elements.maybe_reroll(18, 19)
         }
         // These are all just example numbers -
         // and I haven't included a chance for three re-rolls, but there should probably be one too!
     }
 
-    fn is_triple(&self) -> bool {
+    fn maybe_reroll(&self, t1: u8, t2: u8) -> TileElements {
+        let elements;
+        let roll = rnjesus::d20();
+        if roll <= t1 {
+            elements = self.elements;
+        // a {t1} percent chance of one of the three being randomly re rolled,
+        } else if roll <= t2 {
+            elements = reroll_one(self.elements);
+        // and a {t2} percent chance for two to be re rolled.
+        } else {
+            elements = reroll_two(self.elements);
+        }
+        TileElements::new(elements)
+    }
+
+    fn all_elements(&self) -> AllElements {
         [Element::Air, Element::Earth, Element::Fire, Element::Water]
+    }
+
+    fn is_triple(&self) -> bool {
+        self.all_elements()
             .iter()
-            .any(|element| self.elements.iter().filter(|&n| *n == *element).count() == 3)
+            .any(|element| self.has_element_n(element, 3))
     }
 
     fn is_double(&self) -> bool {
-        [Element::Air, Element::Earth, Element::Fire, Element::Water]
+        self.all_elements()
             .iter()
-            .any(|element| self.elements.iter().filter(|&n| *n == *element).count() == 2)
+            .any(|element| self.has_element_n(element, 2))
+    }
+
+    fn has_element_n(&self, element: &Element, n: u8) -> bool {
+        self.elements.iter().filter(|&n| *n == *element).count() == n.into()
     }
 }
 
@@ -152,13 +144,24 @@ mod tests {
     fn can_create_tile_elements() {
         TileElements::spawn();
         let te = TileElements::new([Element::Air, Element::Earth, Element::Fire]);
-        assert_eq!(te.elements[1], Element::Earth)
+        assert_eq!(te.elements[1], Element::Earth);
     }
 
     #[test]
     fn can_create_element_labels() {
         let e = [Element::Air, Element::Earth, Element::Water];
         let label = get_element_label(e);
-        assert_eq!(label, "AEW")
+        assert_eq!(label, "AEW");
+    }
+
+    #[test]
+    fn can_has_element() {
+        let te = TileElements::new([Element::Air, Element::Air, Element::Fire]);
+        assert!(!te.has_element_n(&Element::Air, 3));
+        assert!(te.has_element_n(&Element::Air, 2));
+        assert!(!te.has_element_n(&Element::Air, 1));
+        assert!(!te.has_element_n(&Element::Fire, 2));
+        assert!(te.has_element_n(&Element::Fire, 1));
+        assert!(!te.has_element_n(&Element::Water, 1));
     }
 }

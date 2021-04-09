@@ -31,6 +31,10 @@ impl Level {
 
         let mut tiles = Vec::new();
 
+        // A series of 4-10 pseudo-random locations are chosen
+        // (much less likely around the player's base and near to the edges of the overall map)
+        // https://stackoverflow.com/questions/56326524/producing-a-linear-distribution-for-a-donut-shape
+        // https://docs.rs/statrs/0.7.0/statrs/distribution/struct.Beta.html
         tiles.push(Tile::new(Level::generate_random_location(width, height)));
         tiles.push(Tile::new(Level::generate_random_location(width, height)));
         tiles.push(Tile::new(Level::generate_random_location(width, height)));

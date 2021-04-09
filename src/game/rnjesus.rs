@@ -7,10 +7,6 @@ pub fn d20() -> u8 {
     rand_u8(1, 20)
 }
 
-pub fn d10() -> u8 {
-    rand_u8(1, 10)
-}
-
 pub fn rand_u8(x: u8, y: u8) -> u8 {
     let mut rng = rand::thread_rng();
     rng.gen_range(x, y + 1) as u8

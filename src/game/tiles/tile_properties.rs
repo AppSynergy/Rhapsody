@@ -88,6 +88,8 @@ impl TileProperties {
         }
     }
 
+    // Next the tile will have its main characteristics rolled for,
+    // with the upper and lower bounds (or at least the relative probabilities of such)
     pub fn spawn(tile_elements: &TileElements) -> Self {
         let label = &tile_elements.elements_label;
         let elements = &tile_elements.elements;

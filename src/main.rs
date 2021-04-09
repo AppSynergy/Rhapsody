@@ -4,7 +4,7 @@ mod game;
 mod level;
 mod node;
 
-use game::tiles::{TerrainType, Tile, TileElements, TileProperties, Element};
+use game::tiles::Tile;
 
 use level::Level;
 
@@ -13,9 +13,5 @@ fn main() {
     let level = Level::new(20, 20);
     println!("{}", level);
 
-    let _t = Tile::new(
-        TerrainType::Taiga,
-        TileElements::new([Element::Fire, Element::Fire, Element::Water]),
-        TileProperties::new(),
-    );
+    let _t = Tile::spawn();
 }

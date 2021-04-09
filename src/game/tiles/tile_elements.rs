@@ -31,7 +31,10 @@ pub struct TileElements {
 }
 
 fn get_element_label(elements: [Element; 3]) -> String {
-    elements.iter().map(|x| x.to_label().to_string()).collect::<String>()
+    elements
+        .iter()
+        .map(|x| x.to_label().to_string())
+        .collect::<String>()
 }
 
 impl TileElements {
@@ -43,8 +46,6 @@ impl TileElements {
         }
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

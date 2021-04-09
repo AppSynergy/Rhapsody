@@ -1,3 +1,6 @@
+use super::Element;
+use super::TileElements;
+
 pub struct TileProperties {
     pub topography: u8,
     pub vulcanism: u8,
@@ -7,7 +10,7 @@ pub struct TileProperties {
 }
 
 impl TileProperties {
-    pub fn new() -> Self {
+    pub fn new(tile_elements: &TileElements) -> Self {
         TileProperties {
             vegetation: 0,
             humidity: 0,
@@ -24,7 +27,8 @@ mod tests {
 
     #[test]
     fn can_create_tile_properties() {
-        let tp = TileProperties::new();
-        assert_eq!(tp.vegetation, 0)
+        let tile_elements = TileElements::new([Element::Earth, Element::Earth, Element::Water]);
+        let tile_properties = TileProperties::new(&tile_elements);
+        assert_eq!(tile_properties.vegetation, 0)
     }
 }

@@ -18,6 +18,14 @@ impl Tile {
             properties,
         }
     }
+
+    pub fn spawn() -> Self {
+        let tile_elements = TileElements::new([Element::Air, Element::Earth, Element::Fire]);
+        let tile_properties = TileProperties::new(&tile_elements);
+        let terrain_type = TerrainType::Taiga;
+
+        Tile::new(terrain_type, tile_elements, tile_properties)
+    }
 }
 
 #[cfg(test)]
@@ -25,12 +33,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn can_create_tiles() {
-        let t = TerrainType::Taiga;
-        let tp = TileProperties::new();
-        let te = TileElements::new([Element::Air, Element::Earth, Element::Fire]);
-
-        let tile = Tile::new(t, te, tp);
+    fn can_spawn_new_tiles() {
+        let tile = Tile::spawn();
 
         assert_eq!(tile.properties.vegetation, 0)
     }

@@ -25,12 +25,14 @@ impl Element {
     }
 }
 
+pub type ThreeElements = [Element; 3];
+
 pub struct TileElements {
-    pub elements: [Element; 3],
+    pub elements: ThreeElements,
     pub elements_label: String,
 }
 
-fn get_element_label(elements: [Element; 3]) -> String {
+fn get_element_label(elements: ThreeElements) -> String {
     elements
         .iter()
         .map(|x| x.to_label().to_string())
@@ -38,7 +40,7 @@ fn get_element_label(elements: [Element; 3]) -> String {
 }
 
 impl TileElements {
-    pub fn new(elements: [Element; 3]) -> Self {
+    pub fn new(elements: ThreeElements) -> Self {
         let elements_label = get_element_label(elements);
         TileElements {
             elements,

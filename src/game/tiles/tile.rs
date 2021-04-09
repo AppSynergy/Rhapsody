@@ -22,7 +22,7 @@ impl Tile {
     pub fn spawn() -> Self {
         let tile_elements = TileElements::new([Element::Air, Element::Earth, Element::Fire]);
         let tile_properties = TileProperties::spawn(&tile_elements);
-        let terrain_type = TerrainType::Taiga;
+        let terrain_type = TerrainType::spawn(&tile_properties);
 
         Tile::new(terrain_type, tile_elements, tile_properties)
     }

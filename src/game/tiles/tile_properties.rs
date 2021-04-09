@@ -1,6 +1,5 @@
 use super::rnjesus;
-use super::Element;
-use super::TileElements;
+use super::{Element, ThreeElements, TileElements};
 
 pub struct TileProperties {
     // Environmental properties
@@ -12,6 +11,13 @@ pub struct TileProperties {
     // Structural properties
     children: u8,
     distance: u8,
+}
+
+fn get_topography(elements: &ThreeElements) -> u8 {
+    match elements {
+        [Element::Fire, Element::Fire, Element::Fire] => 7,
+        _ => 0,
+    }
 }
 
 fn get_children(elements_label: &String) -> u8 {
@@ -61,13 +67,21 @@ fn get_distance(elements_label: &String) -> u8 {
 }
 
 impl TileProperties {
-    pub fn new(children: u8, distance: u8) -> Self {
+    pub fn new(
+        topography: u8,
+        vulcanism: u8,
+        temperature: u8,
+        humidity: u8,
+        vegetation: u8,
+        children: u8,
+        distance: u8,
+    ) -> Self {
         TileProperties {
-            vegetation: 0,
-            humidity: 0,
-            temperature: 0,
-            vulcanism: 0,
-            topography: 0,
+            topography,
+            vulcanism,
+            temperature,
+            humidity,
+            vegetation,
             children,
             distance,
         }
@@ -75,10 +89,14 @@ impl TileProperties {
 
     pub fn spawn(tile_elements: &TileElements) -> Self {
         let label = &tile_elements.elements_label;
+        let elements = &tile_elements.elements;
+
+        let topography = get_topography(elements);
+
         let children = get_children(label);
         let distance = get_distance(label);
 
-        TileProperties::new(children, distance)
+        TileProperties::new(topography, 0, 0, 0, 0, children, distance)
     }
 }
 

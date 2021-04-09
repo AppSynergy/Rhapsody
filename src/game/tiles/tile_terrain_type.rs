@@ -2,22 +2,85 @@ use super::*;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum TerrainType {
-    Desert,
-    Jungle,
-    Taiga,
+    // High altitude
     Mountains,
+    ExtremeMountains,
+    VolcanicMountains,
+    // Cold tiles
+    Icefields,
+    Glacier,
+    BorealForest,
+    Tundra,
+    // Hot tiles
+    Jungle,
+    TropicalForest,
+    Desert,
+    Savannah,
+    // Temperate tiles
+    Swamp,
+    ConiferForest,
+    TemperateForest,
+    Plains,
 }
 
-fn select_terrain_type(tile_elements: &TileElements, tile_properties: &TileProperties) -> TerrainType {
-    if tile_elements.elements_label == "EEE".to_string() {
-        return TerrainType::Mountains
+fn select_terrain_type(
+    tile_elements: &TileElements,
+    tile_properties: &TileProperties,
+) -> TerrainType {
+    // High altitude
+    if tile_properties.topography >= 8 {
+        // it's a mega mountain!
+        if tile_elements.elements_label == "EEE".to_string() {
+            return TerrainType::ExtremeMountains;
+        }
+        if tile_properties.vulcanism >= 6 {
+            return TerrainType::VolcanicMountains;
+        }
+        return TerrainType::Mountains;
     }
 
-    match &tile_properties {
-        TileProperties { temperature: t, .. } if t > &7 => TerrainType::Desert,
-        TileProperties { humidity: h, .. } if h > &7 => TerrainType::Jungle,
-        _ => TerrainType::Taiga,
+    // Hot tiles
+    if tile_properties.temperature >= 8 {
+        if tile_properties.humidity >= 7 && tile_properties.vegetation >= 7 {
+            return TerrainType::Jungle;
+        }
+        if tile_properties.vegetation >= 6 {
+            return TerrainType::TropicalForest;
+        }
+        if tile_properties.humidity <= 4 {
+            return TerrainType::Desert;
+        }
+
+        return TerrainType::Savannah;
     }
+
+    // Cold tiles
+    if tile_properties.temperature <= 2 {
+        if tile_properties.temperature == 0 {
+            return TerrainType::Icefields;
+        }
+        if tile_properties.humidity >= 6 && tile_properties.topography >= 4 {
+            return TerrainType::Glacier;
+        }
+        if tile_properties.vegetation >= 6 {
+            return TerrainType::BorealForest;
+        }
+
+        return TerrainType::Tundra;
+    }
+
+    // Temperate tiles
+    if tile_properties.humidity >= 7 && tile_properties.vegetation >= 7 {
+        return TerrainType::Swamp;
+    }
+    if tile_properties.vegetation >= 6 {
+        if tile_properties.topography >= 4 {
+            return TerrainType::ConiferForest;
+        }
+        return TerrainType::TemperateForest;
+    }
+
+    TerrainType::Plains
 }
 
 impl TerrainType {
@@ -26,7 +89,6 @@ impl TerrainType {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -34,7 +96,8 @@ mod tests {
     #[test]
     fn can_select_terrain_types() {
         let tile_elements = TileElements::new([Element::Earth, Element::Earth, Element::Earth]);
-        let terrain_type = select_terrain_type(&tile_elements, &TileProperties::spawn(&tile_elements));
+        let terrain_type =
+            select_terrain_type(&tile_elements, &TileProperties::spawn(&tile_elements));
 
         assert_eq!(terrain_type, TerrainType::Mountains)
     }

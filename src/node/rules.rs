@@ -6,19 +6,6 @@ pub trait NodeTraits {
     fn distance(&self) -> u8;
 }
 
-enum CardPoint {
-    North,
-    East,
-    South,
-    West,
-}
-
-enum Arrangement {
-    One(CardPoint),
-    Two(CardPoint, CardPoint),
-    Three(CardPoint, CardPoint, CardPoint),
-}
-
 fn rand_u8(x: u8, y: u8) -> u8 {
     let mut rng = rand::thread_rng();
     rng.gen_range(x, y) as u8

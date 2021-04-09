@@ -13,7 +13,7 @@ fn main() {
     let level = Level::new(20, 20);
     println!("{}", level);
 
-    let t = Tile::new(
+    let _t = Tile::new(
         TerrainType::Taiga,
         TileElements::new([Element::Fire, Element::Fire, Element::Water]),
         TileProperties::new(),

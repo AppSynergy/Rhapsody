@@ -27,6 +27,11 @@ impl Tile {
 
         Tile::new(terrain_type, tile_elements, tile_properties)
     }
+
+    pub fn propagate(_tile: &Tile) -> Self {
+        // TODO
+        Tile::spawn()
+    }
 }
 
 #[cfg(test)]
@@ -38,5 +43,11 @@ mod tests {
         let tile = Tile::spawn();
 
         assert_eq!(tile.properties.vegetation, 0)
+    }
+
+    #[test]
+    fn can_propagate() {
+        let tile = Tile::spawn();
+        Tile::propagate(&tile);
     }
 }

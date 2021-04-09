@@ -12,7 +12,13 @@ fn main() {
     let level = Level::new(20, 20);
     println!("{}", level);
 
-    let tile = Tile::spawn();
-    println!("{:?}", tile)
+    let tile1 = Tile::spawn();
+    println!("{:?}", tile1);
+
+    let tile2 = Tile::propagate(&tile1);
+    println!("{:?}", tile2);
+
+    let tile3 = Tile::propagate(&tile1);
+    println!("{:?}", tile3);
 
 }

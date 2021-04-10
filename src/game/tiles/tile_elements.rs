@@ -21,7 +21,7 @@ impl Element {
 
     fn to_icon(&self) -> &str {
         match self {
-            Element::Air => "🌪",
+            Element::Air => "🌩 ",
             Element::Earth => "🌏",
             Element::Fire => "🔥",
             Element::Water => "💧",

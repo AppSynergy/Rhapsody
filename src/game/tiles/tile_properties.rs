@@ -18,7 +18,7 @@ impl fmt::Display for TileProperties {
         write!(f, "╞══════════════════════════════════╡\n")?;
         write!(
             f,
-            "│ {} ⛰  │ {} 🌋 │ {} 🌶  │ {} 🌧  │ {} 🌲 │",
+            "│{:>2} ⛰  │{:>2} 🌋 │{:>2} 🏜  │{:>2} 🌧  │{:>2} 🌱 │",
             self.topography.to_string(), self.vulcanism, self.temperature, self.humidity, self.vegetation
         ).ok();
         write!(f, "\n╰──────────────────────────────────╯")?;
@@ -99,31 +99,42 @@ fn get_vulcanism(tile_elements: &TileElements, topography: &u8) -> u8 {
 }
 
 fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
+    let mut max_temperature: u8 = 10 - *topography;
     if tile_elements.has_element_n(&Element::Fire, 3) {
         return 10;
     }
     if tile_elements.has_element_n(&Element::Fire, 2) {
-        return 9;
+        max_temperature += 3;
     }
-    rnjesus::dx(*topography)
+    if tile_elements.has_element_n(&Element::Fire, 1) {
+        max_temperature += 2;
+    }
+    rnjesus::dx(max_temperature)
 }
 
 fn get_humidity(tile_elements: &TileElements, temperature: &u8) -> u8 {
+    let mut max_humidity: u8 = *temperature + 1;
+    if tile_elements.has_element_n(&Element::Fire, 3) {
+        return 1;
+    }
     if tile_elements.has_element_n(&Element::Water, 3) {
         return 10;
     }
     if tile_elements.has_element_n(&Element::Water, 2) {
-        return 9;
+        max_humidity += 3;
     }
-    rnjesus::dx(*temperature)
+    if tile_elements.has_element_n(&Element::Water, 1) {
+        max_humidity += 2;
+    }
+    rnjesus::dx(max_humidity)
 }
 
 fn get_vegetation(tile_elements: &TileElements, humidity: &u8) -> u8 {
-    let mut max_humidity = *humidity;
+    let mut max_vegetation = *humidity + 2;
     if tile_elements.is_single() {
-        max_humidity += 2
+        max_vegetation += 2
     }
-    rnjesus::dx(max_humidity)
+    rnjesus::dx(max_vegetation)
 }
 
 fn get_children(tile_elements: &TileElements) -> u8 {

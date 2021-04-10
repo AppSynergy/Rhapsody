@@ -10,7 +10,14 @@ pub struct Tile {
 impl fmt::Display for Tile {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "╭──────────────────────────────────╮\n")?;
-        write!(f, "│{} {:>20}  │\n{}\n", self.elements, format!("{:?}", self.terrain_type), self.properties)
+        write!(
+            f,
+            "│ {:>7} {} {:>18} │\n{}\n",
+            self.elements,
+            self.elements.elements_label,
+            format!("{:?}", self.terrain_type),
+            self.properties
+        )
     }
 }
 

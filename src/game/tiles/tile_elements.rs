@@ -1,38 +1,9 @@
-use super::rnjesus;
+use super::*;
 
 use std::fmt;
 use std::iter::FromIterator;
 
-#[derive(Copy, Clone, Eq, Ord, PartialOrd, PartialEq, Debug)]
-pub enum Element {
-    Air,
-    Earth,
-    Fire,
-    Water,
-}
-
-impl Element {
-    fn to_label(&self) -> &str {
-        match self {
-            Element::Air => "A",
-            Element::Earth => "E",
-            Element::Fire => "F",
-            Element::Water => "W",
-        }
-    }
-
-    fn to_icon(&self) -> &str {
-        match self {
-            Element::Air => "🌩 ",
-            Element::Earth => "🌏",
-            Element::Fire => "🔥",
-            Element::Water => "💧",
-        }
-    }
-}
-
 pub type ThreeElements = [Element; 3];
-pub type AllElements = [Element; 4];
 
 #[derive(Debug)]
 pub struct TileElements {
@@ -42,28 +13,18 @@ pub struct TileElements {
 
 impl fmt::Display for TileElements {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            &self
-                .elements
-                .iter()
-                .map(|x| format!("{} ", x.to_icon()).to_string())
-                .collect::<String>()
-        )
+        let out: &String = &self
+            .elements
+            .iter()
+            .map(|x| format!("{} ", x.to_icon()).to_string())
+            .collect::<String>();
+        write!(f, "{}", out)
     }
-}
-
-fn get_element_label(elements: ThreeElements) -> String {
-    let mut labels: Vec<&str> = elements.iter().map(|x| x.to_label()).collect();
-    labels.sort_by(|a, b| a.cmp(b));
-
-    String::from_iter(labels)
 }
 
 impl TileElements {
     pub fn new(elements: ThreeElements) -> Self {
-        let elements_label = get_element_label(elements);
+        let elements_label = TileElements::get_element_label(elements);
         TileElements {
             elements,
             elements_label,
@@ -96,6 +57,37 @@ impl TileElements {
         // and I haven't included a chance for three re-rolls, but there should probably be one too!
     }
 
+    fn get_element_label(elements: ThreeElements) -> String {
+        let mut labels: Vec<&str> = elements.iter().map(|x| x.to_label()).collect();
+        labels.sort_by(|a, b| a.cmp(b));
+
+        String::from_iter(labels)
+    }
+
+    fn reroll_two(&self) -> ThreeElements {
+        let elements: ThreeElements = self.elements;
+        let which = rnjesus::rand_u8(0, 2);
+        let roll1 = rnjesus::rand_element();
+        let roll2 = rnjesus::rand_element();
+        let roll3 = if which == 0 { roll1 } else { roll2 };
+        [
+            if which == 0 { elements[0] } else { roll1 },
+            if which == 1 { elements[1] } else { roll2 },
+            if which == 2 { elements[2] } else { roll3 },
+        ]
+    }
+
+    fn reroll_one(&self) -> ThreeElements {
+        let elements: ThreeElements = self.elements;
+        let which = rnjesus::rand_u8(0, 2);
+        let roll = rnjesus::rand_element();
+        [
+            if which == 0 { roll } else { elements[0] },
+            if which == 1 { roll } else { elements[1] },
+            if which == 2 { roll } else { elements[2] },
+        ]
+    }
+
     fn maybe_reroll(&self, t1: u8, t2: u8) -> TileElements {
         let elements;
         let roll = rnjesus::d20();
@@ -103,66 +95,48 @@ impl TileElements {
             elements = self.elements;
         // a {t1} percent chance of one of the three being randomly re rolled,
         } else if roll <= t2 {
-            elements = reroll_one(self.elements);
+            elements = self.reroll_one();
         // and a {t2} percent chance for two to be re rolled.
         } else {
-            elements = reroll_two(self.elements);
+            elements = self.reroll_two();
         }
         TileElements::new(elements)
     }
 
-    fn all_elements(&self) -> AllElements {
-        [Element::Air, Element::Earth, Element::Fire, Element::Water]
+    fn all_elements(&self) -> std::slice::Iter<Element> {
+        [Element::Air, Element::Earth, Element::Fire, Element::Water].iter()
     }
 
+    // Elements Logic API
     pub fn is_triple(&self) -> bool {
         self.all_elements()
-            .iter()
-            .any(|element| self.has_element_n(element, 3))
+            .any(|element| self.is_triple_of(element))
+    }
+
+    pub fn is_triple_of(&self, element: &Element) -> bool {
+        self.has_n(element, 3)
     }
 
     pub fn is_double(&self) -> bool {
         self.all_elements()
-            .iter()
-            .any(|element| self.has_element_n(element, 2))
+            .any(|element| self.is_double_of(element))
+    }
+
+    pub fn is_double_of(&self, element: &Element) -> bool {
+        self.has_n(element, 2)
     }
 
     pub fn is_single(&self) -> bool {
-        self.all_elements()
-            .iter()
-            .all(|element| self.has_element_n(element, 1))
+        self.all_elements().all(|element| self.has_n(element, 1))
     }
 
-    pub fn has_element(&self, element: &Element) -> bool {
+    pub fn has(&self, element: &Element) -> bool {
         self.elements.iter().filter(|&i| *i == *element).count() >= 1
     }
 
-    pub fn has_element_n(&self, element: &Element, n: u8) -> bool {
+    pub fn has_n(&self, element: &Element, n: u8) -> bool {
         self.elements.iter().filter(|&i| *i == *element).count() == n.into()
     }
-}
-
-fn reroll_two(elements: ThreeElements) -> ThreeElements {
-    let which = rnjesus::rand_u8(0, 2);
-    // TODO lazy
-    let roll1 = rnjesus::rand_element();
-    let roll2 = rnjesus::rand_element();
-    let roll3 = rnjesus::rand_element();
-    [
-        if which == 0 { elements[0] } else { roll1 },
-        if which == 1 { elements[1] } else { roll2 },
-        if which == 2 { elements[2] } else { roll3 },
-    ]
-}
-
-fn reroll_one(elements: ThreeElements) -> ThreeElements {
-    let which = rnjesus::rand_u8(0, 2);
-    let roll = rnjesus::rand_element();
-    [
-        if which == 0 { roll } else { elements[0] },
-        if which == 1 { roll } else { elements[1] },
-        if which == 2 { roll } else { elements[2] },
-    ]
 }
 
 #[cfg(test)]
@@ -170,27 +144,58 @@ mod tests {
     use super::*;
 
     #[test]
-    fn can_create_tile_elements() {
-        TileElements::spawn();
+    fn can_create_new_tile_elements() {
         let te = TileElements::new([Element::Air, Element::Earth, Element::Fire]);
+        assert_eq!(te.elements[0], Element::Air);
         assert_eq!(te.elements[1], Element::Earth);
+        assert_eq!(te.elements[2], Element::Fire);
+    }
+
+    #[test]
+    fn can_spawn_tile_elements() {
+        TileElements::spawn();
     }
 
     #[test]
     fn can_create_element_labels() {
-        let e = [Element::Air, Element::Earth, Element::Water];
-        let label = get_element_label(e);
+        let e = [Element::Water, Element::Air, Element::Earth];
+        let label = TileElements::get_element_label(e);
         assert_eq!(label, "AEW");
     }
 
     #[test]
-    fn can_has_element() {
+    fn can_reroll() {
+        let te = TileElements::new([Element::Air, Element::Earth, Element::Fire]);
+        te.reroll_one();
+        te.reroll_two();
+    }
+
+    #[test]
+    fn can_has_doubles() {
+        let te = TileElements::new([Element::Air, Element::Water, Element::Water]);
+        assert!(te.is_double());
+        assert!(te.is_double_of(&Element::Water));
+        assert!(!te.is_triple());
+        assert!(!te.is_single());
+    }
+
+    #[test]
+    fn can_has_triples() {
+        let te = TileElements::new([Element::Fire, Element::Fire, Element::Fire]);
+        assert!(te.is_triple_of(&Element::Fire));
+        assert!(te.is_triple());
+        assert!(!te.is_double());
+        assert!(!te.is_single());
+    }
+
+    #[test]
+    fn can_has() {
         let te = TileElements::new([Element::Air, Element::Air, Element::Fire]);
-        assert!(!te.has_element_n(&Element::Air, 3));
-        assert!(te.has_element_n(&Element::Air, 2));
-        assert!(!te.has_element_n(&Element::Air, 1));
-        assert!(!te.has_element_n(&Element::Fire, 2));
-        assert!(te.has_element_n(&Element::Fire, 1));
-        assert!(!te.has_element_n(&Element::Water, 1));
+        assert!(!te.has_n(&Element::Air, 3));
+        assert!(te.has_n(&Element::Air, 2));
+        assert!(!te.has_n(&Element::Air, 1));
+        assert!(!te.has_n(&Element::Fire, 2));
+        assert!(te.has_n(&Element::Fire, 1));
+        assert!(!te.has_n(&Element::Water, 1));
     }
 }

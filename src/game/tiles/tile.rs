@@ -46,7 +46,7 @@ impl Tile {
         // Depending on the title's elemental characteristics, it multiplies/propogates in different ways:
         let tile_elements = TileElements::propagate(&tile.elements);
         // TODO convert to propagate??
-        let tile_properties = TileProperties::spawn(&&tile_elements);
+        let tile_properties = TileProperties::propagate(&tile_elements, &tile.properties);
         let terrain_type = TerrainType::spawn(&tile_elements, &tile_properties);
 
         Tile::new(terrain_type, tile_elements, tile_properties)

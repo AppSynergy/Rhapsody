@@ -71,16 +71,20 @@ impl TileProperties {
             distance,
         )
     }
+
+    pub fn propagate(tile_elements: &TileElements, _tile_properties: &TileProperties) -> Self {
+        Self::spawn(tile_elements)
+    }
 }
 
 fn get_topography(tile_elements: &TileElements) -> u8 {
-    if tile_elements.has_element_n(&Element::Air, 3) {
+    if tile_elements.has_n(&Element::Air, 3) {
         return 10;
     }
-    if tile_elements.has_element_n(&Element::Air, 2) {
+    if tile_elements.has_n(&Element::Air, 2) {
         return 9;
     }
-    if tile_elements.has_element(&Element::Air) {
+    if tile_elements.has(&Element::Air) {
         return 7;
     }
 
@@ -88,10 +92,10 @@ fn get_topography(tile_elements: &TileElements) -> u8 {
 }
 
 fn get_vulcanism(tile_elements: &TileElements, topography: &u8) -> u8 {
-    if tile_elements.has_element_n(&Element::Earth, 3) {
+    if tile_elements.has_n(&Element::Earth, 3) {
         return 10;
     }
-    if tile_elements.has_element_n(&Element::Earth, 2) {
+    if tile_elements.has_n(&Element::Earth, 2) {
         return 9;
     }
 
@@ -100,13 +104,13 @@ fn get_vulcanism(tile_elements: &TileElements, topography: &u8) -> u8 {
 
 fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
     let mut max_temperature: u8 = 12 - *topography;
-    if tile_elements.has_element_n(&Element::Fire, 3) {
+    if tile_elements.has_n(&Element::Fire, 3) {
         return 10;
     }
-    if tile_elements.has_element_n(&Element::Fire, 2) {
+    if tile_elements.has_n(&Element::Fire, 2) {
         max_temperature += 3;
     }
-    if tile_elements.has_element_n(&Element::Fire, 1) {
+    if tile_elements.has_n(&Element::Fire, 1) {
         max_temperature += 2;
     }
     rnjesus::dx(max_temperature, 10)
@@ -114,16 +118,16 @@ fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
 
 fn get_humidity(tile_elements: &TileElements, temperature: &u8) -> u8 {
     let mut max_humidity: u8 = *temperature + 1;
-    if tile_elements.has_element_n(&Element::Fire, 3) {
+    if tile_elements.has_n(&Element::Fire, 3) {
         return 1;
     }
-    if tile_elements.has_element_n(&Element::Water, 3) {
+    if tile_elements.has_n(&Element::Water, 3) {
         return 10;
     }
-    if tile_elements.has_element_n(&Element::Water, 2) {
+    if tile_elements.has_n(&Element::Water, 2) {
         max_humidity += 3;
     }
-    if tile_elements.has_element_n(&Element::Water, 1) {
+    if tile_elements.has_n(&Element::Water, 1) {
         max_humidity += 2;
     }
     rnjesus::dx(max_humidity, 10)

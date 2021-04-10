@@ -37,12 +37,13 @@ impl TileProperties {
     // Next the tile will have its main characteristics rolled for,
     // with the upper and lower bounds (or at least the relative probabilities of such)
     pub fn spawn(tile_elements: &TileElements) -> Self {
+        // Environmental properties
         let topography: u8 = get_topography(&tile_elements);
-        let vulcanism: u8 = rnjesus::rand_u8(0, 10);
+        let vulcanism: u8 = get_vulcanism(&tile_elements, &topography);
         let temperature: u8 = get_temperature(&tile_elements, &topography);
-        let humidity: u8 = rnjesus::rand_u8(0, 10);
-        let vegetation: u8 = rnjesus::rand_u8(0, 10);
-
+        let humidity: u8 = get_humidity(&tile_elements, &temperature);
+        let vegetation: u8 = get_vegetation(&tile_elements, &humidity);
+        // Structural properties
         let children: u8 = get_children(&tile_elements);
         let distance: u8 = get_distance(&tile_elements);
 
@@ -72,6 +73,17 @@ fn get_topography(tile_elements: &TileElements) -> u8 {
     rnjesus::d10()
 }
 
+fn get_vulcanism(tile_elements: &TileElements, topography: &u8) -> u8 {
+    if tile_elements.has_element_n(&Element::Earth, 3) {
+        return 10;
+    }
+    if tile_elements.has_element_n(&Element::Earth, 2) {
+        return 9;
+    }
+
+    rnjesus::dx(*topography)
+}
+
 fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
     if tile_elements.has_element_n(&Element::Fire, 3) {
         return 10;
@@ -79,7 +91,25 @@ fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
     if tile_elements.has_element_n(&Element::Fire, 2) {
         return 9;
     }
-    rnjesus::rand_u8(1, *topography)
+    rnjesus::dx(*topography)
+}
+
+fn get_humidity(tile_elements: &TileElements, temperature: &u8) -> u8 {
+    if tile_elements.has_element_n(&Element::Water, 3) {
+        return 10;
+    }
+    if tile_elements.has_element_n(&Element::Water, 2) {
+        return 9;
+    }
+    rnjesus::dx(*temperature)
+}
+
+fn get_vegetation(tile_elements: &TileElements, humidity: &u8) -> u8 {
+    let mut max_humidity = *humidity;
+    if tile_elements.is_single() {
+        max_humidity += 2
+    }
+    rnjesus::dx(max_humidity)
 }
 
 fn get_children(tile_elements: &TileElements) -> u8 {

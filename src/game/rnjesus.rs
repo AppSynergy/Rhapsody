@@ -3,6 +3,10 @@ use rand::prelude::*;
 
 use super::tiles::Element;
 
+pub fn dx(x: u8) -> u8 {
+    rand_u8(1, x)
+}
+
 pub fn d10() -> u8 {
     rand_u8(1, 10)
 }

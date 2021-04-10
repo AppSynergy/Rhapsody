@@ -96,16 +96,22 @@ impl TileElements {
         [Element::Air, Element::Earth, Element::Fire, Element::Water]
     }
 
-    fn is_triple(&self) -> bool {
+    pub fn is_triple(&self) -> bool {
         self.all_elements()
             .iter()
             .any(|element| self.has_element_n(element, 3))
     }
 
-    fn is_double(&self) -> bool {
+    pub fn is_double(&self) -> bool {
         self.all_elements()
             .iter()
             .any(|element| self.has_element_n(element, 2))
+    }
+
+    pub fn is_single(&self) -> bool {
+        self.all_elements()
+            .iter()
+            .all(|element| self.has_element_n(element, 1))
     }
 
     pub fn has_element(&self, element: &Element) -> bool {

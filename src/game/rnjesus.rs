@@ -1,10 +1,12 @@
 use rand;
 use rand::prelude::*;
+use std::cmp;
 
 use super::tiles::Element;
 
-pub fn dx(x: u8) -> u8 {
-    rand_u8(1, x)
+pub fn dx(x: u8, dice: u8) -> u8 {
+    let max = cmp::min(dice, x);
+    rand_u8(1, max)
 }
 
 pub fn d10() -> u8 {

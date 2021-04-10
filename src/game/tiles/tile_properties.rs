@@ -95,11 +95,11 @@ fn get_vulcanism(tile_elements: &TileElements, topography: &u8) -> u8 {
         return 9;
     }
 
-    rnjesus::dx(*topography)
+    rnjesus::dx(*topography, 10)
 }
 
 fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
-    let mut max_temperature: u8 = 10 - *topography;
+    let mut max_temperature: u8 = 12 - *topography;
     if tile_elements.has_element_n(&Element::Fire, 3) {
         return 10;
     }
@@ -109,7 +109,7 @@ fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
     if tile_elements.has_element_n(&Element::Fire, 1) {
         max_temperature += 2;
     }
-    rnjesus::dx(max_temperature)
+    rnjesus::dx(max_temperature, 10)
 }
 
 fn get_humidity(tile_elements: &TileElements, temperature: &u8) -> u8 {
@@ -126,7 +126,7 @@ fn get_humidity(tile_elements: &TileElements, temperature: &u8) -> u8 {
     if tile_elements.has_element_n(&Element::Water, 1) {
         max_humidity += 2;
     }
-    rnjesus::dx(max_humidity)
+    rnjesus::dx(max_humidity, 10)
 }
 
 fn get_vegetation(tile_elements: &TileElements, humidity: &u8) -> u8 {
@@ -134,7 +134,7 @@ fn get_vegetation(tile_elements: &TileElements, humidity: &u8) -> u8 {
     if tile_elements.is_single() {
         max_vegetation += 2
     }
-    rnjesus::dx(max_vegetation)
+    rnjesus::dx(max_vegetation, 10)
 }
 
 fn get_children(tile_elements: &TileElements) -> u8 {

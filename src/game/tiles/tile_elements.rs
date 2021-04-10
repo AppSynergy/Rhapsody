@@ -1,5 +1,7 @@
 use super::rnjesus;
+
 use std::fmt;
+use std::iter::FromIterator;
 
 #[derive(Copy, Clone, Eq, Ord, PartialOrd, PartialEq, Debug)]
 pub enum Element {
@@ -46,17 +48,17 @@ impl fmt::Display for TileElements {
             &self
                 .elements
                 .iter()
-                .map(|x| format!("{} ",x.to_icon()).to_string())
+                .map(|x| format!("{} ", x.to_icon()).to_string())
                 .collect::<String>()
         )
     }
 }
 
 fn get_element_label(elements: ThreeElements) -> String {
-    elements
-        .iter()
-        .map(|x| x.to_label().to_string())
-        .collect::<String>()
+    let mut labels: Vec<&str> = elements.iter().map(|x| x.to_label()).collect();
+    labels.sort_by(|a, b| a.cmp(b));
+
+    String::from_iter(labels)
 }
 
 impl TileElements {

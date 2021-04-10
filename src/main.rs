@@ -12,16 +12,16 @@ fn main() {
     let level = Level::new(20, 20);
     println!("{}", level);
 
-    for _ in 0..4 {
-        let mut parent = Tile::spawn();
-        println!("SPAWNING..\n");
-        println!("{}", parent);
 
-        for _ in 0..13 {
-            let tile = Tile::propagate(&parent);
-            println!("{}", tile);
-            parent = tile;
-        }
-        println!("\n");
+    let mut parent = Tile::spawn();
+    println!("SPAWNING..\n");
+    println!("{}", parent);
+
+    for _ in 0..13 {
+        let tile = Tile::propagate(&parent);
+        println!("{}", tile);
+        parent = tile;
     }
+    println!("\n");
+
 }

@@ -9,10 +9,6 @@ pub fn dx(x: u8, dice: u8) -> u8 {
     rand_u8(1, max)
 }
 
-pub fn d10() -> u8 {
-    rand_u8(1, 10)
-}
-
 pub fn d20() -> u8 {
     rand_u8(1, 20)
 }

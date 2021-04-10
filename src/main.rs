@@ -17,11 +17,11 @@ fn main() {
     println!("SPAWNING..\n");
     println!("{}", parent);
 
-    for _ in 0..13 {
+    (0..parent.properties.children).for_each(|_| {
         let tile = Tile::propagate(&parent);
         println!("{}", tile);
         parent = tile;
-    }
+    });
     println!("\n");
 
 }

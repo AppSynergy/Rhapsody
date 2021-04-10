@@ -9,8 +9,8 @@ pub struct TileProperties {
     pub humidity: u8,
     pub vegetation: u8,
     // Structural properties
-    children: u8,
-    distance: u8,
+    pub children: u8,
+    pub distance: u8,
 }
 
 impl fmt::Display for TileProperties {
@@ -19,8 +19,13 @@ impl fmt::Display for TileProperties {
         write!(
             f,
             "│{:>2} ⛰  │{:>2} 🌋 │{:>2} 🏜  │{:>2} 🌧  │{:>2} 🌱 │",
-            self.topography.to_string(), self.vulcanism, self.temperature, self.humidity, self.vegetation
-        ).ok();
+            self.topography.to_string(),
+            self.vulcanism,
+            self.temperature,
+            self.humidity,
+            self.vegetation
+        )
+        .ok();
         write!(f, "\n╰──────────────────────────────────╯")?;
 
         Ok(())
@@ -78,56 +83,59 @@ impl TileProperties {
 }
 
 fn get_topography(tile_elements: &TileElements) -> u8 {
-    if tile_elements.has_n(&Element::Air, 3) {
+    let mut max_topography: u8 = 7;
+    if tile_elements.is_triple_of(&Element::Air) {
+        return 0;
+    } else if tile_elements.is_triple_of(&Element::Earth) {
         return 10;
     }
-    if tile_elements.has_n(&Element::Air, 2) {
-        return 9;
-    }
     if tile_elements.has(&Element::Air) {
-        return 7;
+        max_topography = 10;
     }
 
-    rnjesus::d10()
+    rnjesus::dx(max_topography, 10)
 }
 
 fn get_vulcanism(tile_elements: &TileElements, topography: &u8) -> u8 {
-    if tile_elements.has_n(&Element::Earth, 3) {
+    let mut max_vulcanism: u8 = *topography + 1;
+    if tile_elements.is_triple_of(&Element::Earth) {
         return 10;
     }
-    if tile_elements.has_n(&Element::Earth, 2) {
-        return 9;
+    if tile_elements.is_double_of(&Element::Earth) {
+        max_vulcanism = 10;
     }
 
-    rnjesus::dx(*topography, 10)
+    rnjesus::dx(max_vulcanism, 10)
 }
 
 fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
     let mut max_temperature: u8 = 12 - *topography;
-    if tile_elements.has_n(&Element::Fire, 3) {
+    if tile_elements.is_triple_of(&Element::Fire) {
         return 10;
     }
-    if tile_elements.has_n(&Element::Fire, 2) {
+    if tile_elements.is_double_of(&Element::Fire) {
         max_temperature += 3;
     }
-    if tile_elements.has_n(&Element::Fire, 1) {
+    if tile_elements.has(&Element::Fire) {
         max_temperature += 2;
+    } else if tile_elements.has(&Element::Air) {
+        max_temperature -= 1;
     }
     rnjesus::dx(max_temperature, 10)
 }
 
 fn get_humidity(tile_elements: &TileElements, temperature: &u8) -> u8 {
-    let mut max_humidity: u8 = *temperature + 1;
-    if tile_elements.has_n(&Element::Fire, 3) {
+    let mut max_humidity: u8 = *temperature + 3;
+    if tile_elements.is_triple_of(&Element::Fire) {
         return 1;
     }
-    if tile_elements.has_n(&Element::Water, 3) {
+    if tile_elements.is_triple_of(&Element::Water) {
         return 10;
     }
-    if tile_elements.has_n(&Element::Water, 2) {
+    if tile_elements.is_double_of(&Element::Water) {
         max_humidity += 3;
     }
-    if tile_elements.has_n(&Element::Water, 1) {
+    if tile_elements.has(&Element::Water) {
         max_humidity += 2;
     }
     rnjesus::dx(max_humidity, 10)

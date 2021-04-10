@@ -58,7 +58,7 @@ impl TileProperties {
     pub fn spawn(tile_elements: &TileElements) -> Self {
         // Environmental properties
         let topography: u8 = get_topography(&tile_elements);
-        let vulcanism: u8 = get_vulcanism(&tile_elements, &topography);
+        let vulcanism: u8 = get_vulcanism(&tile_elements);
         let temperature: u8 = get_temperature(&tile_elements, &topography);
         let humidity: u8 = get_humidity(&tile_elements, &temperature);
         let vegetation: u8 = get_vegetation(&tile_elements, &humidity);
@@ -96,16 +96,29 @@ fn get_topography(tile_elements: &TileElements) -> u8 {
     rnjesus::dx(max_topography, 10)
 }
 
-fn get_vulcanism(tile_elements: &TileElements, topography: &u8) -> u8 {
-    let mut max_vulcanism: u8 = *topography + 1;
-    if tile_elements.is_triple_of(&Element::Earth) {
-        return 10;
+fn get_vulcanism(tile_elements: &TileElements) -> u8 {
+    let mut lower: u8 = 2;
+    let mut upper: u8 = 6;
+    if tile_elements.has(&Element::Air) {
+        lower = 3;
+        // 1, 2 on doubles, triples
     }
-    if tile_elements.is_double_of(&Element::Earth) {
-        max_vulcanism = 10;
+    if tile_elements.has(&Element::Earth) {}
+
+    if tile_elements.is_triple_of(&Element::Water) {
+        upper = 3;
+    } else if tile_elements.is_double_of(&Element::Water) {
+        upper = 4;
+    } else if tile_elements.has(&Element::Water) {
+        upper = 5;
+    }
+    // fire trumps water
+    if tile_elements.has(&Element::Fire) {
+        upper = 10;
+        // 5, 6 on doubles, triples
     }
 
-    rnjesus::dx(max_vulcanism, 10)
+    rnjesus::rand_u8(lower, upper)
 }
 
 fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {

@@ -2,25 +2,18 @@ use super::*;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum TerrainType {
-    // High altitude
-    Mountains,
-    ExtremeMountains,
-    VolcanicMountains,
-    // Cold tiles
-    Icefields,
-    Glacier,
-    BorealForest,
     Tundra,
-    // Hot tiles
+    BorealForest,
+    Plains,
+    LushForest,
+    TemperateForest,
+    Shrubland,
+    Prarie,
+    Grassland,
     Jungle,
     TropicalForest,
-    Desert,
     Savannah,
-    // Temperate tiles
-    Swamp,
-    ConiferForest,
-    TemperateForest,
-    Plains,
+    Desert,
 }
 
 impl TerrainType {
@@ -31,63 +24,49 @@ impl TerrainType {
 
 // Based on these rolls, a type is inferred
 fn select_terrain_type(
-    tile_elements: &TileElements,
+    _tile_elements: &TileElements,
     tile_properties: &TileProperties,
 ) -> TerrainType {
-    // High altitude
-    if tile_properties.topography >= 8 {
-        // it's a mega mountain!
-        if tile_elements.elements_label == "EEE".to_string() {
-            return TerrainType::ExtremeMountains;
-        }
-        if tile_properties.vulcanism >= 6 {
-            return TerrainType::VolcanicMountains;
-        }
-        return TerrainType::Mountains;
-    }
+    // Estimate general biome based on temperature and humidity
+    // https://upload.wikimedia.org/wikipedia/commons/6/68/Climate_influence_on_terrestrial_biome.svg
+    let t = tile_properties.temperature;
+    let h = tile_properties.humidity;
 
-    // Hot tiles
-    if tile_properties.temperature >= 8 {
-        if tile_properties.humidity >= 7 && tile_properties.vegetation >= 7 {
-            return TerrainType::Jungle;
-        }
+    let wooded = |wooded_type: TerrainType, unwooded_type: TerrainType| {
         if tile_properties.vegetation >= 6 {
-            return TerrainType::TropicalForest;
+            return wooded_type;
         }
-        if tile_properties.humidity <= 4 {
-            return TerrainType::Desert;
-        }
+        return unwooded_type;
+    };
 
-        return TerrainType::Savannah;
-    }
-
-    // Cold tiles
-    if tile_properties.temperature <= 2 {
-        if tile_properties.temperature == 0 {
-            return TerrainType::Icefields;
-        }
-        if tile_properties.humidity >= 6 && tile_properties.topography >= 4 {
-            return TerrainType::Glacier;
-        }
-        if tile_properties.vegetation >= 6 {
-            return TerrainType::BorealForest;
-        }
-
+    if t <= 3 {
         return TerrainType::Tundra;
     }
-
-    // Temperate tiles
-    if tile_properties.humidity >= 7 && tile_properties.vegetation >= 7 {
-        return TerrainType::Swamp;
-    }
-    if tile_properties.vegetation >= 6 {
-        if tile_properties.topography >= 4 {
-            return TerrainType::ConiferForest;
+    if t <= 5 {
+        if h >= 3 {
+            return TerrainType::BorealForest;
+        } else {
+            return TerrainType::Plains;
         }
-        return TerrainType::TemperateForest;
+    } else if t <= 8 {
+        if h >= 6 {
+            return TerrainType::LushForest;
+        } else if h >= 4 {
+            return wooded(TerrainType::TemperateForest, TerrainType::Grassland);
+        } else if h >= 2 {
+            return wooded(TerrainType::Shrubland, TerrainType::Prarie);
+        } else {
+            return TerrainType::Grassland;
+        }
+    } else {
+        if h >= 7 {
+            return TerrainType::Jungle;
+        } else if h >= 3 {
+            return wooded(TerrainType::TropicalForest, TerrainType::Savannah);
+        } else {
+            return TerrainType::Desert;
+        }
     }
-
-    TerrainType::Plains
 }
 
 #[cfg(test)]

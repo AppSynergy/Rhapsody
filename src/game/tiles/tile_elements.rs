@@ -108,8 +108,12 @@ impl TileElements {
             .any(|element| self.has_element_n(element, 2))
     }
 
-    fn has_element_n(&self, element: &Element, n: u8) -> bool {
-        self.elements.iter().filter(|&n| *n == *element).count() == n.into()
+    pub fn has_element(&self, element: &Element) -> bool {
+        self.elements.iter().filter(|&i| *i == *element).count() >= 1
+    }
+
+    pub fn has_element_n(&self, element: &Element, n: u8) -> bool {
+        self.elements.iter().filter(|&i| *i == *element).count() == n.into()
     }
 }
 

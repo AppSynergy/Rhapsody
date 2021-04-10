@@ -5,7 +5,7 @@ pub mod tile_terrain_type;
 
 pub type Tile = tile::Tile;
 pub type Element = tile_elements::Element;
-pub type ThreeElements = tile_elements::ThreeElements;
+// pub type ThreeElements = tile_elements::ThreeElements;
 pub type TileElements = tile_elements::TileElements;
 pub type TileProperties = tile_properties::TileProperties;
 pub type TerrainType = tile_terrain_type::TerrainType;

@@ -14,11 +14,12 @@ fn main() {
 
     for _ in 0..4 {
         let mut parent = Tile::spawn();
-        println!("NODE:: {}", parent);
+        println!("SPAWNING..\n");
+        println!("{}", parent);
 
         for _ in 0..13 {
             let tile = Tile::propagate(&parent);
-            println!("spawn: {}", tile);
+            println!("{}", tile);
             parent = tile;
         }
         println!("\n");

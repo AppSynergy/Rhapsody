@@ -13,6 +13,20 @@ pub struct TileProperties {
     distance: u8,
 }
 
+impl fmt::Display for TileProperties {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "╞══════════════════════════════════╡\n")?;
+        write!(
+            f,
+            "│ {} ⛰  │ {} 🌋 │ {} 🌶  │ {} 🌧  │ {} 🌲 │",
+            self.topography.to_string(), self.vulcanism, self.temperature, self.humidity, self.vegetation
+        ).ok();
+        write!(f, "\n╰──────────────────────────────────╯")?;
+
+        Ok(())
+    }
+}
+
 impl TileProperties {
     pub fn new(
         topography: u8,

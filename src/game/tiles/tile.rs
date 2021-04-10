@@ -1,5 +1,3 @@
-use std::fmt;
-
 use super::*;
 
 #[derive(Debug)]
@@ -11,7 +9,8 @@ pub struct Tile {
 
 impl fmt::Display for Tile {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?} {}", self.terrain_type, self.elements.elements_label)
+        write!(f, "╭──────────────────────────────────╮\n")?;
+        write!(f, "│{} {:>20}  │\n{}\n", self.elements, format!("{:?}", self.terrain_type), self.properties)
     }
 }
 

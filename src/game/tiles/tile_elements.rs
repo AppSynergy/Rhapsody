@@ -9,12 +9,6 @@ pub enum Element {
     Water,
 }
 
-impl fmt::Display for Element {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self)
-    }
-}
-
 impl Element {
     fn to_label(&self) -> &str {
         match self {
@@ -22,6 +16,15 @@ impl Element {
             Element::Earth => "E",
             Element::Fire => "F",
             Element::Water => "W",
+        }
+    }
+
+    fn to_icon(&self) -> &str {
+        match self {
+            Element::Air => "🌪",
+            Element::Earth => "🌏",
+            Element::Fire => "🔥",
+            Element::Water => "💧",
         }
     }
 }
@@ -33,6 +36,20 @@ pub type AllElements = [Element; 4];
 pub struct TileElements {
     pub elements: ThreeElements,
     pub elements_label: String,
+}
+
+impl fmt::Display for TileElements {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            &self
+                .elements
+                .iter()
+                .map(|x| format!("{} ",x.to_icon()).to_string())
+                .collect::<String>()
+        )
+    }
 }
 
 fn get_element_label(elements: ThreeElements) -> String {

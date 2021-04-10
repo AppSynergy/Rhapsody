@@ -11,3 +11,5 @@ pub type TileProperties = tile_properties::TileProperties;
 pub type TerrainType = tile_terrain_type::TerrainType;
 
 use super::rnjesus;
+
+use std::fmt;

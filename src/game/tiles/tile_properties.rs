@@ -83,17 +83,17 @@ impl TileProperties {
 }
 
 fn get_topography(tile_elements: &TileElements) -> u8 {
-    let mut max_topography: u8 = 7;
-    if tile_elements.is_triple_of(&Element::Air) {
-        return 0;
-    } else if tile_elements.is_triple_of(&Element::Earth) {
-        return 10;
-    }
-    if tile_elements.has(&Element::Air) {
-        max_topography = 10;
+    // earth vs air
+    let mut p = 0.5;
+    for element in tile_elements.elements.iter() {
+        match element {
+            Element::Air => p += 0.05,
+            Element::Earth => p -= 0.05,
+            _ => {}
+        }
     }
 
-    rnjesus::dx(max_topography, 10)
+    rnjesus::binom(10, p)
 }
 
 fn get_vulcanism(tile_elements: &TileElements) -> u8 {

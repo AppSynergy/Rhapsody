@@ -23,3 +23,9 @@ pub fn rand_element() -> Element {
     let index = rng.gen_range(0, 4);
     [Element::Air, Element::Earth, Element::Fire, Element::Water][index]
 }
+
+pub fn binom(n: u8, p: f64) -> u8 {
+    let mut rng = rand::thread_rng();
+    let bin = rand::distributions::Binomial::new(n.into(), p);
+    rng.sample(bin) as u8
+}

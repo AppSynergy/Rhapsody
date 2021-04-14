@@ -130,7 +130,7 @@ impl TileElements {
         self.all_elements().all(|element| self.has_n(element, 1))
     }
 
-    pub fn has(&self, element: &Element) -> bool {
+    pub fn _has_any(&self, element: &Element) -> bool {
         self.elements.iter().filter(|&i| *i == *element).count() >= 1
     }
 

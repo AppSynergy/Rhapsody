@@ -27,9 +27,9 @@ fn select_terrain_type(
     _tile_elements: &TileElements,
     tile_properties: &TileProperties,
 ) -> TerrainType {
-    // Estimate general biome based on temperature and humidity
+    // Estimate general biome based on climate and humidity
     // https://upload.wikimedia.org/wikipedia/commons/6/68/Climate_influence_on_terrestrial_biome.svg
-    let t = tile_properties.temperature;
+    let t = tile_properties.climate;
     let h = tile_properties.humidity;
 
     let wooded = |wooded_type: TerrainType, unwooded_type: TerrainType| {

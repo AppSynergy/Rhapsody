@@ -5,7 +5,7 @@ pub struct TileProperties {
     // Environmental properties
     pub topography: u8,
     pub vulcanism: u8,
-    pub temperature: u8,
+    pub climate: u8,
     pub humidity: u8,
     pub vegetation: u8,
     // Structural properties
@@ -21,7 +21,7 @@ impl fmt::Display for TileProperties {
             "│{:>2} ⛰  │{:>2} 🌋 │{:>2} 🏜  │{:>2} 🌧  │{:>2} 🌱 │",
             self.topography.to_string(),
             self.vulcanism,
-            self.temperature,
+            self.climate,
             self.humidity,
             self.vegetation
         )
@@ -36,7 +36,7 @@ impl TileProperties {
     pub fn new(
         topography: u8,
         vulcanism: u8,
-        temperature: u8,
+        climate: u8,
         humidity: u8,
         vegetation: u8,
         children: u8,
@@ -45,7 +45,7 @@ impl TileProperties {
         TileProperties {
             topography,
             vulcanism,
-            temperature,
+            climate,
             humidity,
             vegetation,
             children,
@@ -59,8 +59,8 @@ impl TileProperties {
         // Environmental properties
         let topography: u8 = get_topography(&tile_elements);
         let vulcanism: u8 = get_vulcanism(&tile_elements);
-        let temperature: u8 = get_temperature(&tile_elements, &topography);
-        let humidity: u8 = get_humidity(&tile_elements, &temperature);
+        let climate: u8 = get_climate(&tile_elements, &topography);
+        let humidity: u8 = get_humidity(&tile_elements, &climate);
         let vegetation: u8 = get_vegetation(&tile_elements, &humidity);
         // Structural properties
         let children: u8 = get_children(&tile_elements);
@@ -69,7 +69,7 @@ impl TileProperties {
         TileProperties::new(
             topography,
             vulcanism,
-            temperature,
+            climate,
             humidity,
             vegetation,
             children,
@@ -83,12 +83,12 @@ impl TileProperties {
 }
 
 fn get_topography(tile_elements: &TileElements) -> u8 {
-    // earth vs air
+    // air vs earth
     let mut p = 0.5;
     for element in tile_elements.elements.iter() {
         match element {
-            Element::Air => p += 0.05,
-            Element::Earth => p -= 0.05,
+            Element::Air => p += 0.1,
+            Element::Earth => p -= 0.1,
             _ => {}
         }
     }
@@ -97,61 +97,42 @@ fn get_topography(tile_elements: &TileElements) -> u8 {
 }
 
 fn get_vulcanism(tile_elements: &TileElements) -> u8 {
-    let mut lower: u8 = 2;
-    let mut upper: u8 = 6;
-    if tile_elements.has(&Element::Air) {
-        lower = 3;
-        // 1, 2 on doubles, triples
+    // fire vs water
+    let mut p = 0.5;
+    for element in tile_elements.elements.iter() {
+        match element {
+            Element::Fire => p += 0.1,
+            Element::Water => p -= 0.1,
+            _ => {}
+        }
     }
-    if tile_elements.has(&Element::Earth) {}
-
-    if tile_elements.is_triple_of(&Element::Water) {
-        upper = 3;
-    } else if tile_elements.is_double_of(&Element::Water) {
-        upper = 4;
-    } else if tile_elements.has(&Element::Water) {
-        upper = 5;
-    }
-    // fire trumps water
-    if tile_elements.has(&Element::Fire) {
-        upper = 10;
-        // 5, 6 on doubles, triples
-    }
-
-    rnjesus::rand_u8(lower, upper)
+    rnjesus::binom(10, p)
 }
 
-fn get_temperature(tile_elements: &TileElements, topography: &u8) -> u8 {
-    let mut max_temperature: u8 = 12 - *topography;
-    if tile_elements.is_triple_of(&Element::Fire) {
-        return 10;
+fn get_climate(tile_elements: &TileElements, _topography: &u8) -> u8 {
+    // fire vs air
+    let mut p = 0.5;
+    for element in tile_elements.elements.iter() {
+        match element {
+            Element::Fire => p += 0.1,
+            Element::Air => p -= 0.1,
+            _ => {}
+        }
     }
-    if tile_elements.is_double_of(&Element::Fire) {
-        max_temperature += 3;
-    }
-    if tile_elements.has(&Element::Fire) {
-        max_temperature += 2;
-    } else if tile_elements.has(&Element::Air) {
-        max_temperature -= 1;
-    }
-    rnjesus::dx(max_temperature, 10)
+    rnjesus::binom(10, p)
 }
 
-fn get_humidity(tile_elements: &TileElements, temperature: &u8) -> u8 {
-    let mut max_humidity: u8 = *temperature + 3;
-    if tile_elements.is_triple_of(&Element::Fire) {
-        return 1;
+fn get_humidity(tile_elements: &TileElements, _climate: &u8) -> u8 {
+    // water vs earth
+    let mut p = 0.5;
+    for element in tile_elements.elements.iter() {
+        match element {
+            Element::Water => p += 0.1,
+            Element::Earth => p -= 0.1,
+            _ => {}
+        }
     }
-    if tile_elements.is_triple_of(&Element::Water) {
-        return 10;
-    }
-    if tile_elements.is_double_of(&Element::Water) {
-        max_humidity += 3;
-    }
-    if tile_elements.has(&Element::Water) {
-        max_humidity += 2;
-    }
-    rnjesus::dx(max_humidity, 10)
+    rnjesus::binom(10, p)
 }
 
 fn get_vegetation(tile_elements: &TileElements, humidity: &u8) -> u8 {

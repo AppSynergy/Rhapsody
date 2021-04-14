@@ -126,7 +126,7 @@ impl TileElements {
         self.has_n(element, 2)
     }
 
-    pub fn is_single(&self) -> bool {
+    pub fn _is_single(&self) -> bool {
         self.all_elements().all(|element| self.has_n(element, 1))
     }
 
@@ -176,7 +176,7 @@ mod tests {
         assert!(te.is_double());
         assert!(te.is_double_of(&Element::Water));
         assert!(!te.is_triple());
-        assert!(!te.is_single());
+        assert!(!te._is_single());
     }
 
     #[test]
@@ -185,7 +185,7 @@ mod tests {
         assert!(te.is_triple_of(&Element::Fire));
         assert!(te.is_triple());
         assert!(!te.is_double());
-        assert!(!te.is_single());
+        assert!(!te._is_single());
     }
 
     #[test]

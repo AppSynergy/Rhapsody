@@ -32,6 +32,12 @@ impl fmt::Display for TileProperties {
     }
 }
 
+pub enum SeaType {
+    None,
+    Ocean,
+    LavaOcean,
+}
+
 impl TileProperties {
     pub fn new(
         topography: u8,
@@ -56,24 +62,20 @@ impl TileProperties {
     // Next the tile will have its main characteristics rolled for,
     // with the upper and lower bounds (or at least the relative probabilities of such)
     pub fn spawn(tile_elements: &TileElements) -> Self {
-        // Environmental properties
+        // Primary environmental properties
         let topography: u8 = get_topography(&tile_elements);
         let vulcanism: u8 = get_vulcanism(&tile_elements);
-        let climate: u8 = get_climate(&tile_elements, &topography);
-        let humidity: u8 = get_humidity(&tile_elements, &climate);
-        let vegetation: u8 = get_vegetation(&tile_elements, &humidity);
+        let climate: u8 = get_climate(&tile_elements);
+        let humidity: u8 = get_humidity(&tile_elements);
+        // Secondary environmental properties
+        let _sea_type: SeaType = get_sea_type(&vulcanism, &humidity);
+        let vegetation: u8 = get_vegetation(&climate, &humidity);
         // Structural properties
         let children: u8 = get_children(&tile_elements);
         let distance: u8 = get_distance(&tile_elements);
 
         TileProperties::new(
-            topography,
-            vulcanism,
-            climate,
-            humidity,
-            vegetation,
-            children,
-            distance,
+            topography, vulcanism, climate, humidity, vegetation, children, distance,
         )
     }
 
@@ -109,7 +111,7 @@ fn get_vulcanism(tile_elements: &TileElements) -> u8 {
     rnjesus::binom(10, p)
 }
 
-fn get_climate(tile_elements: &TileElements, _topography: &u8) -> u8 {
+fn get_climate(tile_elements: &TileElements) -> u8 {
     // fire vs air
     let mut p = 0.5;
     for element in tile_elements.elements.iter() {
@@ -122,7 +124,7 @@ fn get_climate(tile_elements: &TileElements, _topography: &u8) -> u8 {
     rnjesus::binom(10, p)
 }
 
-fn get_humidity(tile_elements: &TileElements, _climate: &u8) -> u8 {
+fn get_humidity(tile_elements: &TileElements) -> u8 {
     // water vs earth
     let mut p = 0.5;
     for element in tile_elements.elements.iter() {
@@ -135,12 +137,21 @@ fn get_humidity(tile_elements: &TileElements, _climate: &u8) -> u8 {
     rnjesus::binom(10, p)
 }
 
-fn get_vegetation(tile_elements: &TileElements, humidity: &u8) -> u8 {
-    let mut max_vegetation = *humidity + 2;
-    if tile_elements.is_single() {
-        max_vegetation += 2
+fn get_sea_type(vulcanism: &u8, humidity: &u8) -> SeaType {
+    if vulcanism >= &8 {
+        return SeaType::LavaOcean;
+    } else if vulcanism <= &3 && humidity >= &8 {
+        return SeaType::Ocean;
     }
-    rnjesus::dx(max_vegetation, 10)
+    SeaType::None
+}
+
+fn get_vegetation(climate: &u8, humidity: &u8) -> u8 {
+    let c: f64 = *climate as f64 / 25.0;
+    let h: f64 = *humidity as f64 / 25.0;
+    let p: f64 = (1.5 * h) + c;
+
+    rnjesus::binom(10, p)
 }
 
 fn get_children(tile_elements: &TileElements) -> u8 {
